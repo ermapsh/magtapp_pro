@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../settings/presentation/pages/settings_page.dart';
 import '../../../subscription/presentation/widgets/subscription_bottom_sheet.dart';
@@ -19,7 +20,6 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   final List<Widget> _pages = const [HomePage(), SettingsPage()];
 
-  bool _isLoadingProfile = true;
   bool _isPro = false;
   bool _subscriptionModalShown = false;
 
@@ -37,7 +37,11 @@ class _MainPageState extends ConsumerState<MainPage> {
 
       final profile = ref.read(userProvider);
 
-      if (profile?.subscription?.isPro != true) {
+      setState(() {
+        _isPro = profile?.subscription?.isPro == true;
+      });
+
+      if (!_isPro) {
         _scheduleSubscriptionModal();
       }
     } catch (e) {
@@ -46,19 +50,30 @@ class _MainPageState extends ConsumerState<MainPage> {
   }
 
   void _scheduleSubscriptionModal() {
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () async {
       if (!mounted) return;
       if (_isPro) return;
       if (_subscriptionModalShown) return;
 
       _subscriptionModalShown = true;
 
-      showModalBottomSheet(
+      final result = await showModalBottomSheet<Map<String, dynamic>>(
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (_) => const SubscriptionBottomSheet(),
       );
+
+      debugPrint('[SUBSCRIPTION] Bottom sheet result: $result');
+
+      if (!mounted) return;
+      if (result == null) return;
+
+      debugPrint(
+        '[PAYMENT] Navigating to payment screen: ${result['orderId']}',
+      );
+
+      context.push('/payment', extra: result);
     });
   }
 

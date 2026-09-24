@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/home/presentation/pages/main_page.dart';
+import '../../features/payment/presentation/pages/payment_page.dart';
 import 'route_names.dart';
 
 GoRouter createRouter(bool isLoggedIn) {
@@ -28,6 +29,18 @@ GoRouter createRouter(bool isLoggedIn) {
         path: RouteNames.home,
         name: 'home',
         builder: (context, state) => const MainPage(),
+      ),
+      GoRoute(
+        path: '/payment',
+        name: 'payment',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          return PaymentPage(
+            orderId: extra['orderId'] as String,
+            amount: extra['amount'] as int,
+            subscriptionPlan: extra['subscriptionPlan'] as String,
+          );
+        },
       ),
     ],
   );

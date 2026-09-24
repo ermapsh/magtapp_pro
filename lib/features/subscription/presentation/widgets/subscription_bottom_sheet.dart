@@ -1,10 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SubscriptionBottomSheet extends StatelessWidget {
+import '../../../order/presentation/providers/order_provider.dart';
+
+class SubscriptionBottomSheet extends ConsumerWidget {
   const SubscriptionBottomSheet({super.key});
 
+  Future<void> _createOrder(
+    BuildContext context,
+    WidgetRef ref, {
+    required int amount,
+    required String subscriptionPlan,
+  }) async {
+    try {
+      debugPrint('[ORDER] Creating order...');
+      debugPrint('[ORDER] Amount: ₹$amount');
+      debugPrint('[ORDER] Plan: $subscriptionPlan');
+
+      final order = await ref
+          .read(orderRepositoryProvider)
+          .createOrder(amount: amount, subscriptionPlan: subscriptionPlan);
+
+      debugPrint('[ORDER] Order created successfully');
+      debugPrint('[ORDER] Order ID: ${order.id}');
+      debugPrint('[ORDER] Status: ${order.status}');
+
+      if (!context.mounted) return;
+
+      // Close the bottom sheet and return order details
+      Navigator.pop(context, {
+        'orderId': order.id,
+        'amount': amount,
+        'subscriptionPlan': subscriptionPlan,
+      });
+    } catch (e, stackTrace) {
+      debugPrint('[ORDER] Failed to create order');
+      debugPrint('[ORDER] Error: $e');
+      debugPrint('[ORDER] Stack trace: $stackTrace');
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to create order. Please try again.'),
+        ),
+      );
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -55,10 +100,12 @@ class SubscriptionBottomSheet extends StatelessWidget {
                     price: '₹99',
                     subtitle: 'per month',
                     onTap: () {
-                      Navigator.pop(context);
-
-                      // TODO:
-                      // Start ₹99 payment flow
+                      _createOrder(
+                        context,
+                        ref,
+                        amount: 99,
+                        subscriptionPlan: 'PRO_MONTHLY_99',
+                      );
                     },
                   ),
                 ),
@@ -71,10 +118,12 @@ class SubscriptionBottomSheet extends StatelessWidget {
                     price: '₹299',
                     subtitle: 'per month',
                     onTap: () {
-                      Navigator.pop(context);
-
-                      // TODO:
-                      // Start ₹299 payment flow
+                      _createOrder(
+                        context,
+                        ref,
+                        amount: 299,
+                        subscriptionPlan: 'PRO_MONTHLY_299',
+                      );
                     },
                   ),
                 ),
