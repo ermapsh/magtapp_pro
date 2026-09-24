@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
-import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/home/presentation/pages/main_page.dart';
 import 'route_names.dart';
 
 GoRouter createRouter(bool isLoggedIn) {
@@ -24,11 +24,10 @@ GoRouter createRouter(bool isLoggedIn) {
         name: 'signup',
         builder: (context, state) => const SignupPage(),
       ),
-
       GoRoute(
         path: RouteNames.home,
         name: 'home',
-        builder: (context, state) => const HomePage(),
+        builder: (context, state) => const MainPage(),
       ),
     ],
   );
