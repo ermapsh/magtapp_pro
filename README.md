@@ -76,3 +76,21 @@ The overall architecture is:
 │ payments             │
 │ subscriptions        │
 └──────────────────────┘
+```
+
+## 3. AWS Cost & Production Approach
+
+Since I don't have access to MagTapp's production AWS account, I would first understand the existing infrastructure before making any changes.
+
+My first steps would be:
+
+- Check the AWS services currently being used and their monthly costs.
+- Review CloudWatch logs and metrics for API errors, latency and resource utilization.
+- Check EC2/ECS/RDS usage and identify any clearly underutilized resources.
+- Review storage, snapshots and log retention for unnecessary usage.
+- Check database performance, connections and slow queries.
+- Add basic CloudWatch alarms for high error rates, latency and infrastructure issues.
+- Test any infrastructure changes in staging first and monitor production after deployment.
+- Avoid removing or resizing anything without confirming its usage and impact.
+
+The goal would be to reduce unnecessary AWS cost while keeping the application stable and reliable.
