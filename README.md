@@ -1,17 +1,78 @@
-# magtapp_pro
+# MagTapp Pro — Full-Stack Flutter + Spring Boot Prototype
 
-A new Flutter project.
+A full-stack prototype for introducing a paid **MagTapp Pro subscription**.
 
-## Getting Started
+The project demonstrates:
 
-This project is a starting point for a Flutter application.
+- Flutter mobile application architecture
+- Spring Boot REST API
+- JWT authentication
+- PostgreSQL persistence
+- User accounts
+- Subscription management
+- Order and payment flow
+- Backend-controlled Pro entitlement
+- Payment state handling
+- Database auditing
+- Basic production-oriented architecture
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+# 1. Project Overview
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The goal of this prototype is to introduce a paid subscription for MagTapp Pro.
+
+Pro plans:
+
+| Plan | Price |
+|------|-------|
+| Free | ₹0 |
+| Pro Monthly | ₹99/month |
+| Pro Monthly | ₹299/month |
+
+The prototype focuses primarily on the backend subscription/payment flow and the architectural decisions required to safely manage Pro entitlements.
+
+The client does not decide whether a user is Pro.
+
+The backend is the source of truth for:
+
+- Payment status
+- Order status
+- Subscription status
+- Subscription expiry
+- Pro entitlement
+
+---
+
+# 2. Architecture
+
+The overall architecture is:
+
+```text
+┌──────────────────────┐
+│      Flutter App     │
+│                      │
+│ Auth / Subscription  │
+│      / Payment       │
+└──────────┬───────────┘
+           │ HTTPS + JWT
+           ▼
+┌──────────────────────┐
+│    Spring Boot API   │
+│                      │
+│ Authentication       │
+│ User                 │
+│ Order                │
+│ Payment              │
+│ Subscription         │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│      PostgreSQL      │
+│                      │
+│ users                │
+│ orders               │
+│ payments             │
+│ subscriptions        │
+└──────────────────────┘
